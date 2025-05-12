@@ -57,6 +57,11 @@ def adjust_saturation(image, factor=1.0):
     """Adjust color saturation."""
     return ImageEnhance.Color(image).enhance(factor)
 
+# def adjust_exposure(image: Image.Image, gain: float) -> Image.Image:
+#     """Apply exposure adjustment via logarithmic mapping on each channel and return new image."""
+#     arr = img_as_float(np.array(image))
+#     adjusted = exposure.adjust_log(arr, gain=gain)
+#     return Image.fromarray(img_as_ubyte(adjusted))
 
 def adjust_exposure(image, gain=1.0):
     """Log exposure adjustment with clipping to avoid dtype issues."""
