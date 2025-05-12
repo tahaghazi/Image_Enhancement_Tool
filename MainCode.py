@@ -84,30 +84,30 @@ def main():
         if choice == '0':
             break
         elif choice == '1':
-            g = float(input("Gamma [1]: ") or 1)
+            g = float(input("Gamma [1]: "))
             current = apply_gamma(current, g)
             modified = True
         elif choice == '2':
             current = apply_hist_eq(current)
             modified = True
         elif choice == '3':
-            f = float(input("Brightness [1]: ") or 1)
+            f = float(input("Brightness [1]: "))
             current = adjust_brightness(current, f)
             modified = True
         elif choice == '4':
-            f = float(input("Contrast [1]: ") or 1)
+            f = float(input("Contrast [1]: "))
             current = adjust_contrast(current, f)
             modified = True
         elif choice == '5':
-            f = float(input("Sharpness [1]: ") or 1)
+            f = float(input("Sharpness [1]: "))
             current = adjust_sharpness(current, f)
             modified = True
         elif choice == '6':
-            f = float(input("Saturation [1]: ") or 1)
+            f = float(input("Saturation [1]: "))
             current = adjust_saturation(current, f)
             modified = True
         elif choice == '7':
-            g = float(input("Exposure [1]: ") or 1)
+            g = float(input("Exposure [1]: "))
             current = adjust_exposure(current, g)
             modified = True
         elif choice == '8':
