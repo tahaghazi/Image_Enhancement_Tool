@@ -19,11 +19,13 @@ def save_image(image, path, quality=95):
     print(f"Saved: {path}")
 
 
+# Apply gamma correction to enhance image brightness non-linearly
 def apply_gamma(image, gamma=1.0):
     arr = img_as_float(np.array(image))
     return Image.fromarray(img_as_ubyte(exposure.adjust_gamma(arr, gamma)))
 
 
+# Apply histogram equalization to improve image contrast
 def apply_hist_eq(image):
     arr = np.array(image)
     ycrcb = cv2.cvtColor(arr, cv2.COLOR_RGB2YCrCb)
@@ -31,17 +33,23 @@ def apply_hist_eq(image):
     return Image.fromarray(cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2RGB))
 
 
+# Adjust image brightness using a scaling factor
 def adjust_brightness(image, factor=1.0):
     return ImageEnhance.Brightness(image).enhance(factor)
 
+
+# Adjust image contrast to make differences between light and dark areas more visible
 def adjust_contrast(image, factor=1.0):
     return ImageEnhance.Contrast(image).enhance(factor)
+
 
 def adjust_sharpness(image, factor=1.0):
     return ImageEnhance.Sharpness(image).enhance(factor)
 
+
 def adjust_saturation(image, factor=1.0):
     return ImageEnhance.Color(image).enhance(factor)
+
 
 def adjust_exposure(image, gain=1.0):
     arr = img_as_float(np.array(image))
@@ -120,10 +128,10 @@ def main():
                 print("Invalid.")
                 continue
 
-            # After any modification except show/save/exit, display
         if modified:
             print("Done.")
             current.show()
-        
+
+
 if __name__ == '__main__':
     main()
