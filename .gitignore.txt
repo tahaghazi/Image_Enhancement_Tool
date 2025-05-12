@@ -1,0 +1,67 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VS Code settings
+.vscode/
+
+# PyCharm
+.idea/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Test results
+htmlcov/
+.tox/
+.nox/
+coverage.*
+.cache
+.pytest_cache/
+
+# MyPy, Pyre, Pylint
+.mypy_cache/
+.dmypy.json
+.pyre/
+pylint-report.txt
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# MacOS
+.DS_Store
+
+# dotenv
+.env
+.env.*
+
+# System files
+Thumbs.db
+Desktop.ini
