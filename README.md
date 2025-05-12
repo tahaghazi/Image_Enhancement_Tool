@@ -77,3 +77,5 @@ When saving the image, the application attempts to minimize compression artifact
 - The application converts the image to RGB format upon loading.
 - All operations are applied to a copy of the original image, so the original remains unchanged unless saved.
 - If you try to save without making any modifications, you will be notified that there are no changes to save.
+## Reviewed By
+MR. President Abdallah Haider
