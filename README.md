@@ -67,6 +67,13 @@ When saving the image, the application attempts to minimize compression artifact
 
 ## Notes
 
+- The image must be in a supported format like JPG, PNG, or BMP.
+- All transformations are cumulative — each operation applies on top of the previous one.
+- It's recommended to keep a backup of the original image before saving.
+- When adjusting brightness, contrast, etc., values around 1.0 mean no change.
+- Histogram Equalization works best with grayscale or low-contrast images.
+
+
 - The application converts the image to RGB format upon loading.
 - All operations are applied to a copy of the original image, so the original remains unchanged unless saved.
 - If you try to save without making any modifications, you will be notified that there are no changes to save.
