@@ -4,142 +4,126 @@ from PIL import Image, ImageEnhance
 from skimage import exposure, img_as_float, img_as_ubyte
 
 
-def load_image(path: str) -> Image.Image:
-    """Load an image from disk and convert it to RGB."""
+def load_image(path):
     return Image.open(path).convert('RGB')
 
 
-def save_image(image: Image.Image, path: str, quality: int = 95) -> None:
-    """
-    Save the image with minimal compression artifacts.
-    - JPEG: set quality, optimize, and disable subsampling.
-    - PNG: set low compression level.
-    """
-    extension = path.split('.')[-1].lower()
-    options = {}
-    if extension in ('jpg', 'jpeg'):
-        options = {'quality': quality, 'optimize': True, 'subsampling': 0}
-    elif extension == 'png':
-        options = {'compress_level': 1}
-
-    image.save(path, **options)
-    print(f"Image saved to {path}")
+def save_image(image, path, quality=95):
+    ext = path.split('.')[-1].lower()
+    opts = {}
+    if ext in ('jpg', 'jpeg'):
+        opts = {'quality': quality, 'optimize': True, 'subsampling': 0}
+    elif ext == 'png':
+        opts = {'compress_level': 1}
+    image.save(path, **opts)
+    print(f"Saved: {path}")
 
 
-def apply_gamma(image: Image.Image, gamma: float) -> Image.Image:
-    """Return a gamma-corrected copy of the image."""
-    float_arr = img_as_float(np.array(image))
-    corrected = exposure.adjust_gamma(float_arr, gamma)
-    return Image.fromarray(img_as_ubyte(corrected))
+def apply_gamma(image, gamma=1.0):
+    arr = img_as_float(np.array(image))
+    return Image.fromarray(img_as_ubyte(exposure.adjust_gamma(arr, gamma)))
 
 
-def apply_histogram_equalization(image: Image.Image) -> Image.Image:
-    """Apply histogram equalization on the luminance channel, preserving color."""
+def apply_hist_eq(image):
     arr = np.array(image)
     ycrcb = cv2.cvtColor(arr, cv2.COLOR_RGB2YCrCb)
     ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0])
-    equalized = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2RGB)
-    return Image.fromarray(equalized)
+    return Image.fromarray(cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2RGB))
 
 
-def adjust_brightness(image: Image.Image, factor: float) -> Image.Image:
+def adjust_brightness(image, factor=1.0):
     return ImageEnhance.Brightness(image).enhance(factor)
 
-
-def adjust_contrast(image: Image.Image, factor: float) -> Image.Image:
+def adjust_contrast(image, factor=1.0):
     return ImageEnhance.Contrast(image).enhance(factor)
 
-
-def adjust_sharpness(image: Image.Image, factor: float) -> Image.Image:
+def adjust_sharpness(image, factor=1.0):
     return ImageEnhance.Sharpness(image).enhance(factor)
 
-
-def adjust_saturation(image: Image.Image, factor: float) -> Image.Image:
+def adjust_saturation(image, factor=1.0):
     return ImageEnhance.Color(image).enhance(factor)
 
-
-def adjust_exposure(image: Image.Image, gain: float) -> Image.Image:
-    """Apply exposure adjustment via logarithmic mapping on each channel and return new image."""
+def adjust_exposure(image, gain=1.0):
     arr = img_as_float(np.array(image))
-    adjusted = exposure.adjust_log(arr, gain=gain)
-    return Image.fromarray(img_as_ubyte(adjusted))
-
-
-def display_menu(options: dict) -> None:
-    """Print the numbered menu from the options dict."""
-    print("\nImage Processing Menu:")
-    for key, (label, *_ ) in options.items():
-        print(f"  {key}. {label}")
-    print("  8. Show Current Image")
-    print("  9. Save Modified Image")
-    print("  0. Exit")
-
-
-def prompt_parameters(params: dict) -> dict:
-    """Prompt user for parameter values, using defaults if no input."""
-    for name, default in params.items():
-        user_input = input(f"Enter {name} (default={default}): ")
-        params[name] = float(user_input) if user_input else default
-    return params
+    return Image.fromarray(img_as_ubyte(exposure.adjust_log(arr, gain)))
 
 
 def main():
-    image_path = input("Enter image path: ")
+    path = input("Path: ")
     try:
-        original = load_image(image_path)
+        img = load_image(path)
     except Exception as e:
-        print(f"Error loading image: {e}")
+        print(f"Load error: {e}")
         return
 
-    current = original.copy()
+    current = img.copy()
     modified = False
 
-    operations = {
-        '1': ('Gamma Correction', apply_gamma, {'gamma': 1.0}),
-        '2': ('Histogram Equalization', apply_histogram_equalization, {}),
-        '3': ('Adjust Brightness', adjust_brightness, {'factor': 1.0}),
-        '4': ('Adjust Contrast', adjust_contrast, {'factor': 1.0}),
-        '5': ('Adjust Sharpness', adjust_sharpness, {'factor': 1.0}),
-        '6': ('Adjust Saturation', adjust_saturation, {'factor': 1.0}),
-        '7': ('Adjust Exposure', adjust_exposure, {'gain': 1.0}),
-    }
-
     while True:
-        display_menu(operations)
-        choice = input("Choose an option (0-9): ")
+        print("\nMenu:\n"
+              "1.Gamma \n2.HistEq  \n3.Brightness  \n4.Contrast\n"
+              "5.Sharpness \n6.Saturation \n7.Exposure\n"
+              "8.Show  \n9.Save  \n0.Exit")
+        choice = input("Choose: ")
 
-        if choice == '0':
-            print("Goodbye!")
-            break
+        match choice:
+            case '0':
+                print("Exit.")
+                break
 
-        if choice == '8':
-            current.show()
-            continue
-
-        if choice == '9':
-            if not modified:
-                print("No changes to save.")
-                continue
-            save_path = input("Output filename (e.g., result.jpg or result.png): ")
-            try:
-                save_image(current, save_path)
-                modified = False
-            except Exception as e:
-                print(f"Failed to save: {e}")
-            continue
-
-        if choice in operations:
-            label, func, params = operations[choice]
-            params = prompt_parameters(params)
-            try:
-                current = func(current, **params)
+            case '1':
+                g = float(input("Gamma [1.0]: ") or 1.0)
+                current = apply_gamma(current, g)
                 modified = True
-                print(f"{label} applied successfully.")
-                current.show()
-            except Exception as e:
-                print(f"Error during {label}: {e}")
-        else:
-            print("Invalid choice, please try again.")
 
+            case '2':
+                current = apply_hist_eq(current)
+                modified = True
+
+            case '3':
+                f = float(input("Brightness [1.0]: ") or 1.0)
+                current = adjust_brightness(current, f)
+                modified = True
+
+            case '4':
+                f = float(input("Contrast [1.0]: ") or 1.0)
+                current = adjust_contrast(current, f)
+                modified = True
+
+            case '5':
+                f = float(input("Sharpness [1.0]: ") or 1.0)
+                current = adjust_sharpness(current, f)
+                modified = True
+
+            case '6':
+                f = float(input("Saturation [1.0]: ") or 1.0)
+                current = adjust_saturation(current, f)
+                modified = True
+
+            case '7':
+                g = float(input("Exposure [1.0]: ") or 1.0)
+                current = adjust_exposure(current, g)
+                modified = True
+
+            case '8':
+                current.show()
+
+            case '9':
+                if not modified:
+                    print("Nothing to save.")
+                    continue
+                out = input("Save as: ")
+                save_image(current, out)
+                modified = False
+
+            case _:
+                print("Invalid.")
+                continue
+
+            # After any modification except show/save/exit, display
+        if modified:
+            print("Done.")
+            current.show()
+        
 if __name__ == '__main__':
     main()
