@@ -9,7 +9,7 @@ def load_image(path):
     return Image.open(path).convert('RGB')
 
 
-def save_image(image, path, quality=95):
+def save_image(image, path, quality=100):
     """Save image as JPEG/PNG with specified quality."""
     ext = path.split('.')[-1].lower()
     options = {}
