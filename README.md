@@ -79,3 +79,5 @@ When saving the image, the application attempts to minimize compression artifact
 - If you try to save without making any modifications, you will be notified that there are no changes to save.
 ## Reviewed By
 MR. President Abdallah Haider
+## Reviewed By
+Ahmed Maher Plus
