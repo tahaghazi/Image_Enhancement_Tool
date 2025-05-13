@@ -38,21 +38,25 @@ def apply_gamma(image, gamma=1.0):
     corrected = np.clip(corrected, 0, 1)  # clip to valid range
     return Image.fromarray(img_as_ubyte(corrected))
 
-    """
+
+"""
     didn't use the known approach of exposure.equalize_hist
     because it distort the image and doesn't keep the original colors
     unlike the cv2.equalizeHist which equalizes the histogram of the Y channel
     and keeps the original colors.
-    
+
     the older approach is:  
-    exposure.equalize_hist(image)
-    """
+       
+        exposure.equalize_hist(image)
+"""
+
+  
 def apply_hist_eq(image):
     """Equalize histogram on the Y channel."""
     arr = np.array(image)
-    ycrcb = cv2.cvtColor(arr, cv2.COLOR_RGB2YCrCb)
+    ycrcb = cv2.cvtColor(arr, cv2.COLOR_RGB2YCrCb) #convert to YCrCb color space
     ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0]) # image[:,:,2]
-    rgb = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2RGB)
+    rgb = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2RGB) #convert back to RGB
     return Image.fromarray(rgb)
 
 
@@ -81,6 +85,7 @@ def adjust_saturation(image, factor=1.0):
 #     adjusted = exposure.adjust_log(arr, gain=gain)
 #     return Image.fromarray(img_as_ubyte(adjusted))
 
+
 def adjust_exposure(image, gain=1.0):
     """Log exposure adjustment with clipping to avoid dtype issues."""
     arr = img_as_float(np.array(image))  # values in [0,1]
@@ -107,37 +112,65 @@ def main():
         if choice == '0':
             break
         elif choice == '1':
-            g = float(input("Gamma [1]: "))
+            try:
+                g = float(input("Gamma [1]: "))
+            except ValueError:
+                print("Invalid gamma value. Please enter a number.")
+                continue
             current = apply_gamma(current, g)
             modified = True
         elif choice == '2':
             current = apply_hist_eq(current)
             modified = True
         elif choice == '3':
-            f = float(input("Brightness [1]: "))
+            try:
+                f = float(input("Brightness [1]: "))
+            except ValueError:
+                print("Invalid brightness value. Please enter a number.")
+                continue
             current = adjust_brightness(current, f)
             modified = True
         elif choice == '4':
-            f = float(input("Contrast [1]: "))
+            try:
+                f = float(input("Contrast [1]: "))
+            except ValueError:
+                print("Invalid contrast value. Please enter a number.")
+                continue
             current = adjust_contrast(current, f)
             modified = True
         elif choice == '5':
-            f = float(input("Sharpness [1]: "))
+            try:
+                f = float(input("Sharpness [1]: "))
+            except ValueError:
+                print("Invalid sharpness value. Please enter a number.")
+                continue
             current = adjust_sharpness(current, f)
             modified = True
         elif choice == '6':
-            f = float(input("Saturation [1]: "))
+            try:
+                f = float(input("Saturation [1]: "))
+            except ValueError:
+                print("Invalid saturation value. Please enter a number.")
+                continue
             current = adjust_saturation(current, f)
             modified = True
         elif choice == '7':
-            g = float(input("Exposure [1]: "))
+            try:
+                g = float(input("Exposure [1]: "))
+            except ValueError:
+                print("Invalid exposure value. Please enter a number.")
+                continue
             current = adjust_exposure(current, g)
             modified = True
         elif choice == '8':
             current.show()
         elif choice == '9':
             if modified:
-                save_image(current, input("Save as: "))
+                try:
+                    save_image(current, input("Save as: "))
+                except Exception as e:
+                    print("Error saving image:", e)
+                    continue
                 modified = False
             else:
                 print("Nothing to save.")
@@ -147,6 +180,7 @@ def main():
         if modified:
             print("Applied.")
             current.show()
+
 
 if __name__ == '__main__':
     main()
