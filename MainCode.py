@@ -30,13 +30,14 @@ def save_image(image, path, quality=100):
     print(f"Saved: {path}")
 
 
-def apply_gamma(image, gamma=1.0): 
+def apply_gamma(image, gamma=1.0):
+    # Non-linear mapping
     """
     Apply gamma correction and ensure values stay in [0,1] range.
     I"out" = I"in" power 1/gamma factor
     """
     arr = img_as_float(np.array(image))  # values in [0,1]
-    corrected = exposure.adjust_gamma(arr, gamma)  # I"out" = I"in" power 1/gamma factor
+    corrected = exposure.adjust_gamma(arr, gamma)  # I_out = I_in power (1/gamma)
     corrected = np.clip(corrected, 0, 1)  # clip to valid range
     return Image.fromarray(img_as_ubyte(corrected))
 
@@ -63,21 +64,25 @@ def apply_hist_eq(image):
 
 
 def adjust_brightness(image, factor=1.0):
+    # Linear scaling
     """Scale brightness."""
     return ImageEnhance.Brightness(image).enhance(factor)
 
 
 def adjust_contrast(image, factor=1.0):
+    # Difference scaling
     """Adjust contrast."""
     return ImageEnhance.Contrast(image).enhance(factor)
 
 
 def adjust_sharpness(image, factor=1.0):
+    # Edge detection
     """Adjust sharpness."""
     return ImageEnhance.Sharpness(image).enhance(factor)
 
 
 def adjust_saturation(image, factor=1.0):
+    # Color component scaling
     """Adjust color saturation."""
     return ImageEnhance.Color(image).enhance(factor)
 
@@ -89,9 +94,10 @@ def adjust_saturation(image, factor=1.0):
 
 
 def adjust_exposure(image, gain=1.0):
+    # Logarithmic function
     """Log exposure adjustment with clipping to avoid dtype issues."""
     arr = img_as_float(np.array(image))  # values in [0,1]
-    exp = exposure.adjust_log(arr, gain)
+    exp = exposure.adjust_log(arr, gain) # 	I_out = log(1 + gain * I_in)
     exp = np.clip(exp, 0, 1)  # clip to valid range
     return Image.fromarray(img_as_ubyte(exp))
 
