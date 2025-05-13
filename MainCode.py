@@ -93,8 +93,7 @@ def adjust_saturation(image, factor=1.0):
 #     return Image.fromarray(img_as_ubyte(adjusted))
 
 
-def adjust_exposure(image, gain=1.0):
-    # Logarithmic function
+def adjust_exposure(image, gain=1.0): # Logarithmic function
     """Log exposure adjustment with clipping to avoid dtype issues."""
     arr = img_as_float(np.array(image))  # values in [0,1]
     exp = exposure.adjust_log(arr, gain) # 	I_out = log(1 + gain * I_in)
