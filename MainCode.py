@@ -7,7 +7,8 @@ from skimage import exposure, img_as_float, img_as_ubyte
 def load_image(path):
     """
     Load an image from disk and convert to RGB.
-    use convert RGB to ensure the compatability of the file wit CV2 & numpy Functions.
+    use convert RGB to ensure the compatability of the file
+    with CV2 & numpy Functions.
     """
     return Image.open(path).convert('RGB')
 
@@ -15,10 +16,11 @@ def load_image(path):
 def save_image(image, path, quality=100):
     """
     Save image as JPEG/PNG with specified quality.
-    optimize: Finds the best Huffman encoding tables to compress the image (Reduces file size without change in image quality)
+    optimize: Finds the best Huffman encoding tables to compress the
+    image (Reduces file size without change in image quality)
     subsapling: Controls how color detail is compressed in JPEG and JPG
     """
-    ext = path.split('.')[-1].lower() #['ima','ge',"jpg"] ima.ge.jpg
+    ext = path.split('.')[-1].lower()  # ['ima','ge',"jpg"] ima.ge.jpg
     options = {}
     if ext in ('jpg', 'jpeg'):
         options = {'quality': quality, 'optimize': True, 'subsampling': 0} 
@@ -34,7 +36,7 @@ def apply_gamma(image, gamma=1.0):
     I"out" = I"in" power 1/gamma factor
     """
     arr = img_as_float(np.array(image))  # values in [0,1]
-    corrected = exposure.adjust_gamma(arr, gamma) # I"out" = I"in" power 1/gamma factor
+    corrected = exposure.adjust_gamma(arr, gamma)  # I"out" = I"in" power 1/gamma factor
     corrected = np.clip(corrected, 0, 1)  # clip to valid range
     return Image.fromarray(img_as_ubyte(corrected))
 
@@ -54,9 +56,9 @@ def apply_gamma(image, gamma=1.0):
 def apply_hist_eq(image):
     """Equalize histogram on the Y channel."""
     arr = np.array(image)
-    ycrcb = cv2.cvtColor(arr, cv2.COLOR_RGB2YCrCb) #convert to YCrCb color space
-    ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0]) # image[:,:,2]
-    rgb = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2RGB) #convert back to RGB
+    ycrcb = cv2.cvtColor(arr, cv2.COLOR_RGB2YCrCb)  # convert to YCrCb color space
+    ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0])  # image[:,:,2]
+    rgb = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2RGB)  # convert back to RGB
     return Image.fromarray(rgb)
 
 
