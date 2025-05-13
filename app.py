@@ -12,13 +12,13 @@ def main():
 
     # Sidebar settings
     st.sidebar.header("Enhancement Controls")
-    gamma = st.sidebar.slider("Gamma", 0.1, 5.0, 1.0, 0.1)
+    gamma = st.sidebar.slider("Gamma", 0.0, 2.0, 1.0, 0.1)
     hist_eq = st.sidebar.checkbox("Histogram Equalization")
-    brightness = st.sidebar.slider("Brightness", 0.5, 2.0, 1.0, 0.1)
-    contrast = st.sidebar.slider("Contrast", 0.5, 2.0, 1.0, 0.1)
+    brightness = st.sidebar.slider("Brightness", 0.0, 2.0, 1.0, 0.1)
+    contrast = st.sidebar.slider("Contrast", 0.0, 2.0, 1.0, 0.1)
     sharpness = st.sidebar.slider("Sharpness", 0.0, 2.0, 1.0, 0.1)
     saturation = st.sidebar.slider("Saturation", 0.0, 2.0, 1.0, 0.1)
-    exposure_gain = st.sidebar.slider("Exposure", 0.5, 2.0, 1.0, 0.1)
+    exposure_gain = st.sidebar.slider("Exposure", 0.0, 2.0, 1.0, 0.1)
 
     # File uploader
     uploaded_file = st.file_uploader("Upload an image...", type=["jpg", "jpeg", "png"])
@@ -57,6 +57,7 @@ def main():
         file_name="enhanced.png",
         mime="image/png"
     )
+
 
 if __name__ == '__main__':
     main()
