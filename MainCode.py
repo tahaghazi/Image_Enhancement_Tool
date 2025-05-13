@@ -5,13 +5,16 @@ from skimage import exposure, img_as_float, img_as_ubyte
 
 
 def load_image(path):
-    """Load an image from disk and convert to RGB."""
+    """
+    Load an image from disk and convert to RGB.
+    
+    """
     return Image.open(path).convert('RGB')
 
 
 def save_image(image, path, quality=100):
     """Save image as JPEG/PNG with specified quality."""
-    ext = path.split('.')[-1].lower()
+    ext = path.split('.')[-1].lower() #['ima','ge',"jpg"] ima.ge.jpg
     options = {}
     if ext in ('jpg', 'jpeg'):
         options = {'quality': quality, 'optimize': True, 'subsampling': 0}
@@ -33,7 +36,7 @@ def apply_hist_eq(image):
     """Equalize histogram on the Y channel."""
     arr = np.array(image)
     ycrcb = cv2.cvtColor(arr, cv2.COLOR_RGB2YCrCb)
-    ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0])
+    ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0]) # image[:,:,2]
     rgb = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2RGB)
     return Image.fromarray(rgb)
 
