@@ -7,31 +7,46 @@ from skimage import exposure, img_as_float, img_as_ubyte
 def load_image(path):
     """
     Load an image from disk and convert to RGB.
-    
+    use convert RGB to ensure the compatability of the file wit CV2 & numpy Functions.
     """
     return Image.open(path).convert('RGB')
 
 
 def save_image(image, path, quality=100):
-    """Save image as JPEG/PNG with specified quality."""
+    """
+    Save image as JPEG/PNG with specified quality.
+    optimize: Finds the best Huffman encoding tables to compress the image (Reduces file size without change in image quality)
+    subsapling: Controls how color detail is compressed in JPEG and JPG
+    """
     ext = path.split('.')[-1].lower() #['ima','ge',"jpg"] ima.ge.jpg
     options = {}
     if ext in ('jpg', 'jpeg'):
-        options = {'quality': quality, 'optimize': True, 'subsampling': 0}
+        options = {'quality': quality, 'optimize': True, 'subsampling': 0} 
     elif ext == 'png':
         options = {'compress_level': 1}
     image.save(path, **options)
     print(f"Saved: {path}")
 
 
-def apply_gamma(image, gamma=1.0):
-    """Apply gamma correction and ensure values stay in [0,1] range."""
+def apply_gamma(image, gamma=1.0): 
+    """
+    Apply gamma correction and ensure values stay in [0,1] range.
+    I"out" = I"in" power 1/gamma factor
+    """
     arr = img_as_float(np.array(image))  # values in [0,1]
-    corrected = exposure.adjust_gamma(arr, gamma)
+    corrected = exposure.adjust_gamma(arr, gamma) # I"out" = I"in" power 1/gamma factor
     corrected = np.clip(corrected, 0, 1)  # clip to valid range
     return Image.fromarray(img_as_ubyte(corrected))
 
-
+    """
+    didn't use the known approach of exposure.equalize_hist
+    because it distort the image and doesn't keep the original colors
+    unlike the cv2.equalizeHist which equalizes the histogram of the Y channel
+    and keeps the original colors.
+    
+    the older approach is:  
+    exposure.equalize_hist(image)
+    """
 def apply_hist_eq(image):
     """Equalize histogram on the Y channel."""
     arr = np.array(image)
